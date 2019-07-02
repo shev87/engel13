@@ -7,6 +7,8 @@ import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 
 public class View extends JFrame implements ActionListener {
@@ -22,6 +24,10 @@ public class View extends JFrame implements ActionListener {
     private JCheckBox jCheckBox;
     private ButtonGroup buttonGroup = new ButtonGroup();
 
+    public ButtonGroup getButtonGroup() {
+        return buttonGroup;
+    }
+
     public void setController(Controller controller) {
         this.controller = controller;
     }
@@ -30,18 +36,21 @@ public class View extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         String text = e.getActionCommand();
         if (text.equals("Выход")) controller.exit();
-        else if (text.equals("О программе \"Engel13\"")) System.out.println("about");
-        else if (text.equals("Инструкция по работе с программой")) System.out.println("13");
+        else if (text.equals("О программе \"Engel13\"")) {
+            controller.showAboutMessage();
+        }
+        else if (text.equals("Инструкция по работе с программой")) {
+            controller.showHowToWork();
+        }
         else if (text.equals("Выбор исходной машиндаты")) {
             controller.loadMachineData();
         }
         else if (text.equals("Выходной файл")) {
-            System.out.println("Выходной файл");
-            createLabelButtonOutput("c://dataNewgvetgvetgvetgvetgbvtehbtegbvtgbvtgbvgvetg.txt");
+            createLabelButtonOutput("c://dataNewgvetgvetgvevtgbvtgbvgvetg.txt");
         }
-
-
-
+        else if (text.equals("СТАРТ")){
+            controller.showStartWindow();
+        }
         jPanel.revalidate();
     }
 
@@ -50,7 +59,7 @@ public class View extends JFrame implements ActionListener {
         createMenu();
         createButtonLoad();
         createLabelButtonLoad("");
-        createCheckBox();
+        createAndListenerCheckBox();
         createButtonOutput();
         createLabelButtonOutput("");
         createJRadioButtonPassword();
@@ -92,7 +101,7 @@ public class View extends JFrame implements ActionListener {
         revalidate();
     }
 
-    private void createCheckBox(){
+    private void createAndListenerCheckBox(){
         GridBagConstraints constraints = new GridBagConstraints();
 //        constraints.weightx = 0;
 //        constraints.weighty = 0;
@@ -104,6 +113,19 @@ public class View extends JFrame implements ActionListener {
 
 
         jCheckBox = new JCheckBox("Внести изменения в выбранный файл");
+
+        jCheckBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                try {
+                    if (e.getStateChange() == ItemEvent.SELECTED) createLabelButtonOutput(controller.getFileOriginal().getAbsolutePath());
+                    else createLabelButtonOutput("");
+                } catch (Exception e1) {
+                    JOptionPane.showMessageDialog(getjPanel(), "Выбери файл, товарищ инженер!", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
         jPanel.add(jCheckBox, constraints);
     }
 
@@ -154,6 +176,7 @@ public class View extends JFrame implements ActionListener {
 
         JRadioButton jRadioButton = new JRadioButton("Разрешить доступ по паролю");
         jRadioButton.setSelected(true);
+        jRadioButton.setActionCommand("password");
         buttonGroup.add(jRadioButton);
         jPanel.add(jRadioButton, constraints);
     }
@@ -169,6 +192,7 @@ public class View extends JFrame implements ActionListener {
         constraints.anchor = GridBagConstraints.WEST;
 
         JRadioButton jRadioButton = new JRadioButton("Доступ только по карте");
+        jRadioButton.setActionCommand("card");
         buttonGroup.add(jRadioButton);
         jPanel.add(jRadioButton, constraints);
     }
@@ -220,8 +244,8 @@ public class View extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension dimension = toolkit.getScreenSize();
-        setBounds(dimension.width/2-250, dimension.height/2 - 250, 700, 500);
-        setTitle("Программа для изменения типа доступа для ТПА Engel");
+        setBounds(dimension.width/2-250, dimension.height/2 - 250, 400, 500);
+        setTitle("Engel13");
         this.add(jPanel);
     }
 
