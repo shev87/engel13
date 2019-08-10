@@ -1,4 +1,4 @@
-package main.java;
+package autocomponent;
 
 import javax.swing.*;
 import javax.swing.event.MenuEvent;
@@ -20,6 +20,11 @@ public class View extends JFrame implements ActionListener {
 
     private Controller controller;
     private JLabel jLabelIn = new JLabel();
+
+    public JLabel getjLabelIn() {
+        return jLabelIn;
+    }
+
     private JLabel jLabelOut = new JLabel();
     private JCheckBox jCheckBox;
     private ButtonGroup buttonGroup = new ButtonGroup();
@@ -42,14 +47,18 @@ public class View extends JFrame implements ActionListener {
         else if (text.equals("Инструкция по работе с программой")) {
             controller.showHowToWork();
         }
-        else if (text.equals("Выбор исходной машиндаты")) {
+        else if (text.equals("Выбор машиндаты")) {
             controller.loadMachineData();
         }
-        else if (text.equals("Выходной файл")) {
+     /*   else if (text.equals("Выходной файл")) {
             createLabelButtonOutput("c://dataNewgvetgvetgvevtgbvtgbvgvetg.txt");
-        }
+        }*/
         else if (text.equals("СТАРТ")){
             controller.showStartWindow();
+        }
+        if (controller.getFileOriginal() != null){
+            createLabelButtonOutput(controller.getFileOriginal().getAbsolutePath());
+            controller.setFileOutput(controller.getFileOriginal());
         }
         jPanel.revalidate();
     }
@@ -59,11 +68,11 @@ public class View extends JFrame implements ActionListener {
         createMenu();
         createButtonLoad();
         createLabelButtonLoad("");
-        createAndListenerCheckBox();
-        createButtonOutput();
-        createLabelButtonOutput("");
-        createJRadioButtonPassword();
-        createJRadioButtonCard();
+        //createAndListenerCheckBox();
+        //createButtonOutput();
+        //createLabelButtonOutput("");
+        //createJRadioButtonPassword();
+        //createJRadioButtonCard();
         createButtonStart();
         revalidate();
     }
@@ -79,7 +88,7 @@ public class View extends JFrame implements ActionListener {
         constraints.fill = GridBagConstraints.BOTH;
         constraints.insets = new Insets(10, 0,0,0);
 
-        JButton buttonLoad = new JButton("Выбор исходной машиндаты");
+        JButton buttonLoad = new JButton("Выбор машиндаты");
         jPanel.add(buttonLoad, constraints);
         buttonLoad.addActionListener(this);
         revalidate();
@@ -113,12 +122,14 @@ public class View extends JFrame implements ActionListener {
 
 
         jCheckBox = new JCheckBox("Внести изменения в выбранный файл");
-
+        jCheckBox.setSelected(true);
         jCheckBox.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 try {
-                    if (e.getStateChange() == ItemEvent.SELECTED) createLabelButtonOutput(controller.getFileOriginal().getAbsolutePath());
+                    if (e.getStateChange() == ItemEvent.SELECTED) {
+                        createLabelButtonOutput(controller.getFileOriginal().getAbsolutePath());
+                    }
                     else createLabelButtonOutput("");
                 } catch (Exception e1) {
                     JOptionPane.showMessageDialog(getjPanel(), "Выбери файл, товарищ инженер!", "Ошибка", JOptionPane.ERROR_MESSAGE);
@@ -199,10 +210,10 @@ public class View extends JFrame implements ActionListener {
 
     private void createButtonStart(){
         GridBagConstraints constraints = new GridBagConstraints();
-        constraints.weightx = 0;
-        constraints.weighty = 0.2;
+//        constraints.weightx = 0;
+        constraints.weighty = 0.1;
         constraints.gridx = 0;
-        constraints.gridy = 9;
+        constraints.gridy = 5;
         constraints.gridheight = 1;
         constraints.gridwidth = 1;
         constraints.fill = GridBagConstraints.BOTH;
@@ -244,7 +255,7 @@ public class View extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension dimension = toolkit.getScreenSize();
-        setBounds(dimension.width/2-250, dimension.height/2 - 250, 400, 500);
+        setBounds(dimension.width/2-250, dimension.height/2 - 250, 350, 300);
         setTitle("Engel13");
         this.add(jPanel);
     }

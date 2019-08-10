@@ -1,13 +1,19 @@
-package main.java;
+package autocomponent;
+
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
 
+
 public class Controller {
     private View view;
     private File fileOriginal;
     private File fileOutput;
+
+    public void setFileOutput(File fileOutput) {
+        this.fileOutput = fileOutput;
+    }
 
     public File getFileOriginal() {
         return fileOriginal;
@@ -56,12 +62,12 @@ public class Controller {
             fileOriginal = fileChooser.getSelectedFile();
             view.createLabelButtonLoad(fileOriginal.getAbsolutePath());
         } catch (NullPointerException e) {
-            JOptionPane.showMessageDialog(view.getjPanel(), "Выбери файл, товарищ инженер!", "Предупреждение", JOptionPane.WARNING_MESSAGE);
+            //JOptionPane.showMessageDialog(view.getjPanel(), "Выбери файл, товарищ инженер!", "Предупреждение", JOptionPane.WARNING_MESSAGE);
         }
     }
 
     public void showAboutMessage(){
-        JOptionPane.showMessageDialog(view.getjPanel(), "Engel13\nверсия 0.01", "Информация о программе", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(view.getjPanel(), "Engel13\nверсия 1.00", "Информация о программе", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void showHowToWork(){
@@ -70,20 +76,23 @@ public class Controller {
     }
 
     public void showStartWindow(){
-        String s = view.getButtonGroup().getSelection().getActionCommand();
-        String message = "";
-        if (s.equals("password")) message = "доступ по паролю";
-        else if (s.equals("card")) message = "доступ по карте";
-        int yes = JOptionPane.showConfirmDialog(view.getjPanel(), "Вы выбрали: " + message + "\nНачать преобразование данных?", "Engel13", JOptionPane.YES_NO_OPTION);
+       // String s = view.getButtonGroup().getSelection().getActionCommand();
+        //String message = "";
+        //if (s.equals("password")) message = "доступ по паролю";
+        //else if (s.equals("card")) message = "доступ по карте";
+        //int yes = JOptionPane.showConfirmDialog(view.getjPanel(), "Вы выбрали: " + message + "\nНачать преобразование данных?", "Engel13", JOptionPane.YES_NO_OPTION);
+        int yes = JOptionPane.showConfirmDialog(view.getjPanel(), "Начать преобразование данных?", "Engel13", JOptionPane.YES_NO_OPTION);
         if (yes == 0){
             try {
                 if (fileOriginal == null) throw new NullPointerException();
-                Thread.sleep(1500);
-                JOptionPane.showMessageDialog(view.getjPanel(), "Преобразование данных успешно завершено!", "Engel13", JOptionPane.INFORMATION_MESSAGE);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                ZipFileManager zipFileManager = new ZipFileManager(fileOriginal);
+                zipFileManager.copyMachineData();
+                String machineId = zipFileManager.changeFileToExistingZip();
+                JOptionPane.showMessageDialog(view.getjPanel(), "Преобразование данных\nмашины №" + machineId + "\nуспешно завершено!", "Engel13", JOptionPane.INFORMATION_MESSAGE);
             } catch (NullPointerException e){
                 JOptionPane.showMessageDialog(view.getjPanel(), "Выбери файл, товарищ инженер!", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception e){
+                e.printStackTrace();
             }
         }
     }
